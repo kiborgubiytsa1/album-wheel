@@ -438,8 +438,16 @@ export default function App() {
               </svg>
             </div>
             <div style={{ position: 'absolute', top: '8px', left: '8px', width: size, height: size, borderRadius: '50%', background: '#222', zIndex: 0 }} />
-            <div style={{ position: 'relative', zIndex: 1, border: '5px solid #222', borderRadius: '50%', overflow: 'hidden', width: size, height: size }}>
-              <svg width={size} height={size} style={{ transform: `rotate(${rotation}deg)`, transition: spinning ? 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 1.0)' : 'none', display: 'block' }}>
+            <div style={{ position: 'relative', zIndex: 1, border: '5px solid #222', borderRadius: '50%', overflow: 'hidden', width: size, height: size, touchAction: 'none' }}>
+              <div style={{
+                width: '100%', height: '100%',
+                transform: `translateZ(0) rotate(${rotation}deg)`,
+                transition: spinning ? 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 1.0)' : 'none',
+                willChange: spinning ? 'transform' : 'auto',
+                backfaceVisibility: 'hidden',
+                pointerEvents: spinning ? 'none' : 'auto',
+              }}>
+              <svg width={size} height={size} style={{ display: 'block' }}>
                 {loading ? (
                   <circle cx={cx} cy={cy} r={r} fill="#f5f5f5" />
                 ) : activeAlbums.length === 0 ? (
@@ -465,6 +473,7 @@ export default function App() {
                 <circle cx={cx} cy={cy} r={16} fill="white" stroke="#222" strokeWidth="3" />
                 <circle cx={cx} cy={cy} r={7} fill="#FFB347" stroke="#222" strokeWidth="2" />
               </svg>
+              </div>
             </div>
           </div>
           <button className="spin-btn" onClick={spin} disabled={spinning || activeAlbums.length < 2} style={{ marginTop: '1.5rem' }}>
