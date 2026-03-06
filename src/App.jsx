@@ -247,19 +247,25 @@ export default function App() {
           .select('albums, disabled_ids')
           .eq('id', 'default')
           .single()
-        if (data) {
-          const stored = data.albums || []
-          const merged = [...stored]
-          for (const def of DEFAULT_ALBUMS) {
-            const exists = merged.some(
-              a => a.title.toLowerCase() === def.title.toLowerCase() &&
-                   a.artist.toLowerCase() === def.artist.toLowerCase()
-            )
-            if (!exists) merged.push(def)
-          }
-          setAlbums(merged)
-          setDisabledIds(new Set(data.disabled_ids || []))
+        const stored = data?.albums || []
+        const newDisabled = new Set(data?.disabled_ids || [])
+        const merged = [...stored]
+        for (const def of DEFAULT_ALBUMS) {
+          const exists = merged.some(
+            a => a.title.toLowerCase() === def.title.toLowerCase() &&
+                 a.artist.toLowerCase() === def.artist.toLowerCase()
+          )
+          if (!exists) merged.push(def)
         }
+        setAlbums(merged)
+        setDisabledIds(newDisabled)
+        // Always persist — saves defaults on first run, new albums on updates
+        await supabase.from('album_wheel_state').upsert({
+          id: 'default',
+          albums: merged,
+          disabled_ids: [...newDisabled],
+          updated_at: new Date().toISOString()
+        })
       } catch (e) {}
       setLoading(false)
     }
