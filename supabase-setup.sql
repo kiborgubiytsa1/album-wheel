@@ -1,21 +1,328 @@
--- Run this in Supabase SQL Editor (Database → SQL Editor → New query)
+-- ============================================================
+-- 1. ALBUMS TABLE
+-- ============================================================
+DROP TABLE IF EXISTS albums CASCADE;
 
-create table if not exists album_wheel_state (
-  id text primary key default 'default',
-  albums jsonb not null default '[]',
-  disabled_ids jsonb not null default '[]',
-  updated_at timestamptz default now()
+CREATE TABLE albums (
+  id         BIGSERIAL PRIMARY KEY,
+  artist     TEXT NOT NULL,
+  title      TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Insert the default row
-insert into album_wheel_state (id) values ('default') on conflict do nothing;
+ALTER TABLE albums ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "public_read"   ON albums FOR SELECT TO anon USING (true);
+CREATE POLICY "public_insert" ON albums FOR INSERT TO anon WITH CHECK (true);
+CREATE POLICY "public_delete" ON albums FOR DELETE TO anon USING (true);
 
--- Enable Row Level Security
-alter table album_wheel_state enable row level security;
+-- ============================================================
+-- 2. WHEEL STATE TABLE
+-- ============================================================
+DROP TABLE IF EXISTS album_wheel_state CASCADE;
 
--- Allow anyone with the anon key to read and write
-create policy "Allow all anon" on album_wheel_state
-  for all using (true) with check (true);
+CREATE TABLE album_wheel_state (
+  id           TEXT PRIMARY KEY DEFAULT 'default',
+  disabled_ids JSONB NOT NULL DEFAULT '[]',
+  updated_at   TIMESTAMPTZ DEFAULT NOW()
+);
 
--- Enable realtime on this table
-alter publication supabase_realtime add table album_wheel_state;
+INSERT INTO album_wheel_state (id, disabled_ids) VALUES ('default', '[]');
+
+ALTER TABLE album_wheel_state ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "public_access" ON album_wheel_state FOR ALL TO anon USING (true) WITH CHECK (true);
+
+-- ============================================================
+-- 3. ALBUMS DATA
+-- ============================================================
+INSERT INTO albums (artist, title) VALUES
+
+-- CLASSIC ROCK / POP
+('Pink Floyd',         'The Wall'),
+('Pink Floyd',         'The Dark Side of the Moon'),
+('Pink Floyd',         'Wish You Were Here'),
+('Radiohead',          'OK Computer'),
+('Radiohead',          'Kid A'),
+('Radiohead',          'In Rainbows'),
+('Radiohead',          'The Bends'),
+('Radiohead',          'A Moon Shaped Pool'),
+('The Beatles',        'Abbey Road'),
+('The Beatles',        'Sgt. Pepper''s Lonely Hearts Club Band'),
+('The Beatles',        'Revolver'),
+('The Beatles',        'The White Album'),
+('David Bowie',        'Ziggy Stardust'),
+('David Bowie',        'Heroes'),
+('David Bowie',        'Blackstar'),
+('David Bowie',        'Low'),
+('Led Zeppelin',       'IV'),
+('Led Zeppelin',       'Physical Graffiti'),
+('Led Zeppelin',       'Led Zeppelin II'),
+('Nirvana',            'Nevermind'),
+('Nirvana',            'In Utero'),
+('Fleetwood Mac',      'Rumours'),
+('Amy Winehouse',      'Back to Black'),
+('Amy Winehouse',      'Frank'),
+('The Strokes',        'Is This It'),
+('The Strokes',        'Room on Fire'),
+('Daft Punk',          'Random Access Memories'),
+('Daft Punk',          'Discovery'),
+('Daft Punk',          'Homework'),
+('Frank Ocean',        'Blonde'),
+('Frank Ocean',        'Channel Orange'),
+('Massive Attack',     'Mezzanine'),
+('Massive Attack',     'Blue Lines'),
+('Portishead',         'Dummy'),
+('Arctic Monkeys',     'AM'),
+('Arctic Monkeys',     'Whatever People Say I Am, That''s What I''m Not'),
+('Arctic Monkeys',     'Humbug'),
+('Tame Impala',        'Currents'),
+('Tame Impala',        'Lonerism'),
+('Tame Impala',        'InnerSpeaker'),
+('Boards of Canada',   'Music Has the Right to Children'),
+('Boards of Canada',   'Geogaddi'),
+('Bob Dylan',          'Highway 61 Revisited'),
+('Bob Dylan',          'Blonde on Blonde'),
+('Bob Dylan',          'Blood on the Tracks'),
+('The Clash',          'London Calling'),
+('Prince',             'Purple Rain'),
+('Prince',             'Sign "O" the Times'),
+('Kate Bush',          'Hounds of Love'),
+('Kate Bush',          'The Dreaming'),
+('Talking Heads',      'Remain in Light'),
+('Television',         'Marquee Moon'),
+('My Bloody Valentine','Loveless'),
+('Joy Division',       'Unknown Pleasures'),
+('Joy Division',       'Closer'),
+('The Smiths',         'The Queen Is Dead'),
+('King Crimson',       'In the Court of the Crimson King'),
+('Kraftwerk',          'Trans-Europe Express'),
+('Nine Inch Nails',    'The Downward Spiral'),
+('Nine Inch Nails',    'Pretty Hate Machine'),
+('Neutral Milk Hotel', 'In the Aeroplane Over the Sea'),
+('Pixies',             'Doolittle'),
+('Björk',              'Homogenic'),
+('Björk',              'Vespertine'),
+('Sade',               'Diamond Life'),
+
+-- SOUL / FUNK / R&B / JAZZ
+('Marvin Gaye',        'What''s Going On'),
+('Marvin Gaye',        'Let''s Get It On'),
+('Lauryn Hill',        'The Miseducation of Lauryn Hill'),
+('Nina Simone',        'Pastel Blues'),
+('Nina Simone',        'Nina Simone Sings the Blues'),
+('Stevie Wonder',      'Songs in the Key of Life'),
+('Stevie Wonder',      'Innervisions'),
+('Michael Jackson',    'Thriller'),
+('Michael Jackson',    'Off the Wall'),
+('Janet Jackson',      'The Velvet Rope'),
+('Jimi Hendrix',       'Electric Ladyland'),
+('Johnny Cash',        'At Folsom Prison'),
+('Miles Davis',        'Bitches Brew'),
+('Miles Davis',        'Kind of Blue'),
+('Charles Mingus',     'The Black Saint and the Sinner Lady'),
+('Alice Coltrane',     'Journey in Satchidananda'),
+('Kamasi Washington',  'The Epic'),
+('Erykah Badu',        'Baduizm'),
+('Erykah Badu',        'Mama''s Gun'),
+('D''Angelo',          'Voodoo'),
+('D''Angelo',          'Black Messiah'),
+('Jill Scott',         'Who Is Jill Scott?'),
+
+-- GORILLAZ
+('Gorillaz', 'Gorillaz'),
+('Gorillaz', 'Demon Days'),
+('Gorillaz', 'Plastic Beach'),
+('Gorillaz', 'The Fall'),
+('Gorillaz', 'Humanz'),
+('Gorillaz', 'The Now Now'),
+('Gorillaz', 'Song Machine Season One'),
+('Gorillaz', 'Cracker Island'),
+
+-- JAMIROQUAI
+('Jamiroquai', 'Emergency on Planet Earth'),
+('Jamiroquai', 'The Return of the Space Cowboy'),
+('Jamiroquai', 'Travelling Without Moving'),
+('Jamiroquai', 'Synkronized'),
+('Jamiroquai', 'A Funk Odyssey'),
+('Jamiroquai', 'Dynamite'),
+('Jamiroquai', 'Rock Dust Light Star'),
+('Jamiroquai', 'Automaton'),
+
+-- KENDRICK LAMAR
+('Kendrick Lamar', 'Overly Dedicated'),
+('Kendrick Lamar', 'Section.80'),
+('Kendrick Lamar', 'good kid, m.A.A.d city'),
+('Kendrick Lamar', 'To Pimp a Butterfly'),
+('Kendrick Lamar', 'DAMN.'),
+('Kendrick Lamar', 'Mr. Morale & The Big Steppers'),
+('Kendrick Lamar', 'GNX'),
+
+-- J. COLE
+('J. Cole', 'Cole World: The Sideline Story'),
+('J. Cole', 'Born Sinner'),
+('J. Cole', '2014 Forest Hills Drive'),
+('J. Cole', '4 Your Eyez Only'),
+('J. Cole', 'KOD'),
+('J. Cole', 'The Off-Season'),
+
+-- MAC MILLER
+('Mac Miller', 'Best Day Ever'),
+('Mac Miller', 'Watching Movies with the Sound Off'),
+('Mac Miller', 'GO:OD AM'),
+('Mac Miller', 'The Divine Feminine'),
+('Mac Miller', 'Swimming'),
+('Mac Miller', 'Circles'),
+
+-- ASAP ROCKY
+('ASAP Rocky', 'Long.Live.ASAP'),
+('ASAP Rocky', 'At.Long.Last.ASAP'),
+('ASAP Rocky', 'Testing'),
+('ASAP Rocky', 'Don''t Be Dumb'),
+
+-- RAP & HIP-HOP CLASSICS
+('Nas',                     'Illmatic'),
+('Nas',                     'It Was Written'),
+('Nas',                     'Stillmatic'),
+('Wu-Tang Clan',            'Enter the Wu-Tang (36 Chambers)'),
+('Wu-Tang Clan',            'Wu-Tang Forever'),
+('Jay-Z',                   'Reasonable Doubt'),
+('Jay-Z',                   'The Blueprint'),
+('Jay-Z',                   'The Black Album'),
+('Notorious B.I.G.',        'Ready to Die'),
+('Notorious B.I.G.',        'Life After Death'),
+('2Pac',                    'All Eyez on Me'),
+('2Pac',                    'Me Against the World'),
+('Eminem',                  'The Slim Shady LP'),
+('Eminem',                  'The Marshall Mathers LP'),
+('Eminem',                  'The Eminem Show'),
+('N.W.A.',                  'Straight Outta Compton'),
+('Ice Cube',                'AmeriKKKa''s Most Wanted'),
+('Dr. Dre',                 'The Chronic'),
+('Dr. Dre',                 '2001'),
+('Snoop Dogg',              'Doggystyle'),
+('Outkast',                 'ATLiens'),
+('Outkast',                 'Aquemini'),
+('Outkast',                 'Stankonia'),
+('Outkast',                 'Speakerboxxx/The Love Below'),
+('A Tribe Called Quest',    'The Low End Theory'),
+('A Tribe Called Quest',    'Midnight Marauders'),
+('A Tribe Called Quest',    'We Got It from Here'),
+('Fugees',                  'The Score'),
+('Kanye West',              'The College Dropout'),
+('Kanye West',              'Late Registration'),
+('Kanye West',              'Graduation'),
+('Kanye West',              '808s & Heartbreak'),
+('Kanye West',              'My Beautiful Dark Twisted Fantasy'),
+('Kanye West',              'Yeezus'),
+('Kanye West',              'The Life of Pablo'),
+('Kid Cudi',                'Man on the Moon: The End of Day'),
+('Kid Cudi',                'Man on the Moon II: The Legend of Mr. Rager'),
+('Kids See Ghosts',         'Kids See Ghosts'),
+('Lil Wayne',               'Tha Carter II'),
+('Lil Wayne',               'Tha Carter III'),
+('Drake',                   'Take Care'),
+('Drake',                   'Nothing Was the Same'),
+('Drake',                   'If You''re Reading This It''s Too Late'),
+('Tyler, the Creator',      'Flower Boy'),
+('Tyler, the Creator',      'Igor'),
+('Tyler, the Creator',      'Call Me If You Get Lost'),
+('Earl Sweatshirt',         'Doris'),
+('Earl Sweatshirt',         'Some Rap Songs'),
+('Childish Gambino',        'Because the Internet'),
+('Childish Gambino',        'Awaken, My Love!'),
+('Big L',                   'Lifestylez ov da Poor & Dangerous'),
+('Rakim',                   'Paid in Full'),
+('Gang Starr',              'Hard to Earn'),
+('Common',                  'Like Water for Chocolate'),
+('Common',                  'Be'),
+('Mos Def',                 'Black on Both Sides'),
+('Black Star',              'Mos Def & Talib Kweli Are Black Star'),
+('Madvillain',              'Madvillainy'),
+('MF DOOM',                 'MM..FOOD'),
+('MF DOOM',                 'Operation: Doomsday'),
+('Cannibal Ox',             'The Cold Vein'),
+('Danny Brown',             'XXX'),
+('Danny Brown',             'Atrocity Exhibition'),
+('Vince Staples',           'Summertime ''06'),
+('Vince Staples',           'Big Fish Theory'),
+('Travis Scott',            'Rodeo'),
+('Travis Scott',            'Astroworld'),
+('Travis Scott',            'Utopia'),
+('Cardi B',                 'Invasion of Privacy'),
+('Nicki Minaj',             'Pink Friday'),
+('21 Savage',               'Savage Mode'),
+('Future',                  'DS2'),
+('Future',                  'HNDRXX'),
+('Young Thug',              'Beautiful Thugger Girls'),
+('Lil Uzi Vert',            'Luv Is Rage 2'),
+('Playboi Carti',           'Die Lit'),
+('Playboi Carti',           'Whole Lotta Red'),
+('JPEGMAFIA',               'Veteran'),
+('JPEGMAFIA',               'All My Heroes Are Cornballs'),
+('JPEGMAFIA & Danny Brown', 'Scaring the Hoes'),
+('billy woods',             'Aethiopes'),
+('Freddie Gibbs',           'Piñata'),
+('Freddie Gibbs',           'Alfredo'),
+('Clipse',                  'Hell Hath No Fury'),
+('Pusha T',                 'Daytona'),
+('Pusha T',                 'It''s Almost Dry'),
+('Big K.R.I.T.',            '4eva Is a Mighty Long Time'),
+('ScHoolboy Q',             'Oxymoron'),
+('ScHoolboy Q',             'Blank Face LP'),
+('Isaiah Rashad',           'The Sun''s Tirade'),
+('Chance the Rapper',       'Acid Rap'),
+('Chance the Rapper',       'Coloring Book'),
+('Noname',                  'Room 25'),
+('Saba',                    'CARE FOR ME'),
+('Joey Bada$$',             'B4.DA.$$'),
+('Joey Bada$$',             'ALL-AMERIKKKAN BADA$$'),
+('Brockhampton',            'Saturation'),
+('Brockhampton',            'Iridescence'),
+('Bone Thugs-n-Harmony',    'E. 1999 Eternal'),
+('Missy Elliott',           'Supa Dupa Fly'),
+('Little Simz',             'GREY Area'),
+('Little Simz',             'Sometimes I Might Be Introvert'),
+('Little Simz',             'No Thank You'),
+('Stormzy',                 'Gang Signs & Prayer'),
+('McKinley Dixon',          'For My Mama and Anyone Who Look Like Her'),
+('Armand Hammer',           'Haram'),
+
+-- ELECTRONIC / EXPERIMENTAL
+('Aphex Twin',              'Selected Ambient Works 85-92'),
+('Aphex Twin',              'Richard D. James Album'),
+('Burial',                  'Untrue'),
+('DJ Shadow',               'Endtroducing.....'),
+('The Avalanches',          'Since I Left You'),
+('Death Grips',             'The Money Store'),
+('Death Grips',             'No Love Deep Web'),
+('Nicolas Jaar',            'Space Is Only Noise'),
+('FKA twigs',               'LP1'),
+('FKA twigs',               'Magdalene'),
+('Charli XCX',              'Brat'),
+('SOPHIE',                  'Oil of Every Pearl''s Un-Insides'),
+('Tim Hecker',              'Virgins'),
+('Cocteau Twins',           'Heaven or Las Vegas'),
+('Swans',                   'To Be Kind'),
+('Godspeed You! Black Emperor', 'Lift Your Skinny Fists Like Antennas to Heaven'),
+('System of a Down',        'Toxicity'),
+('My Chemical Romance',     'The Black Parade'),
+
+-- INDIE / FOLK / ALT
+('Fleet Foxes',             'Helplessness Blues'),
+('Bon Iver',                'For Emma, Forever Ago'),
+('Bon Iver',                'Bon Iver, Bon Iver'),
+('Sufjan Stevens',          'Illinois'),
+('Sufjan Stevens',          'Carrie & Lowell'),
+('Weyes Blood',             'Titanic Rising'),
+('Weyes Blood',             'And in the Darkness Hearts Aglow'),
+('Joanna Newsom',           'Have One on Me'),
+('PJ Harvey',               'Let England Shake'),
+('Mount Eerie',             'A Crow Looked at Me'),
+('Father John Misty',       'Pure Comedy'),
+('Perfume Genius',          'No Shape'),
+('Billie Eilish',           'When We All Fall Asleep, Where Do We Go?'),
+('Idles',                   'Joy as an Act of Resistance'),
+('Parquet Courts',          'Wide Awake!'),
+('Rina Sawayama',           'Sawayama'),
+('Phoebe Bridgers',         'Punisher'),
+('boygenius',               'The Record'),
+('Laura Marling',           'Patterns in Repeat');
