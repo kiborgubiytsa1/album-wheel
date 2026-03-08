@@ -325,7 +325,7 @@ export default function App() {
         }
         .toggle-all-btn:hover { border-color: #F4A44A; color: #F4A44A; background: #fff8ef; }
         .artist-chip {
-          border: 3px solid #222; border-radius: 20px; padding: .22rem .65rem;
+          border: 5px solid #222; border-radius: 15px; padding: .22rem .65rem;
           font-family: 'Fredoka One', cursive; font-size: .76rem; cursor: pointer;
           white-space: nowrap; transition: all .12s; flex-shrink: 0;
           box-shadow: 2px 2px 0 #222; background: white; color: #222;
