@@ -442,7 +442,7 @@ export default function App() {
             disabled={spinning || loading || activeAlbums.length < 2}
             style={{ marginTop: '1.25rem' }}
           >
-            {loading ? 'Loading… ⏳' : spinning ? 'Spinning… 🌀' : activeAlbums.length < 2 ? 'Enable 2+ albums!' : 'Spin it!'}
+            {loading ? 'Loading… ⏳' : spinning ? 'Spinning…' : activeAlbums.length < 2 ? 'Enable 2+ albums!' : 'Spin it!'}
           </button>
         </div>
 
@@ -562,7 +562,7 @@ export default function App() {
               {winner.artist && <div style={{ fontFamily: "'Nunito', sans-serif", fontSize: '.9rem', fontWeight: 700, color: '#aaa', marginTop: '.3rem' }}>{winner.artist}</div>}
             </div>
             <button onClick={() => setShowWinner(false)} style={{ background: '#FF6B6B', border: '3px solid #222', borderRadius: '50px', color: 'white', fontFamily: "'Fredoka One', cursive", fontSize: '1.1rem', padding: '.55rem 2rem', cursor: 'pointer', boxShadow: '3px 3px 0 #222' }}>
-              Let's go! 🎧
+              Let's go!
             </button>
           </div>
         </div>
