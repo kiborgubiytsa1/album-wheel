@@ -486,8 +486,8 @@ export default function App() {
             </span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem', flexShrink: 0 }}>
               <button className="toggle-all-btn" onClick={toggleAll}
-                title={activeAlbums.length > 0 ? 'Выключить все' : 'Включить все'}>
-                {activeAlbums.length > 0 ? 'Выкл все' : 'Вкл все'}
+                title={activeAlbums.length > 0 ? 'Turn off all albums' : 'Turn on all albums'}>
+                {activeAlbums.length > 0 ? 'Off all' : 'On all'}
               </button>
               <span style={{ background: '#F4A44A', color: 'white', fontFamily: "'Fredoka One', cursive", fontSize: '.82rem', padding: '.15rem .65rem', borderRadius: '20px' }}>
                 {activeAlbums.length} / {albums.length}
