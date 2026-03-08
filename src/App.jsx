@@ -318,14 +318,14 @@ export default function App() {
         }
         .toggle-btn.active { background: #F4A44A; border-color: #d4843a; box-shadow: 0 0 0 2.5px #F4A44A33; }
         .toggle-all-btn {
-          background: none; border: 2px solid #ccc; border-radius: 8px;
+          background: none; border: 4px solid #ccc; border-radius: 8px;
           cursor: pointer; font-size: .72rem; padding: .2rem .5rem;
           color: #999; font-family: 'Fredoka One', cursive;
           transition: all .15s; flex-shrink: 0; line-height: 1.3;
         }
         .toggle-all-btn:hover { border-color: #F4A44A; color: #F4A44A; background: #fff8ef; }
         .artist-chip {
-          border: 5px solid #222; border-radius: 15px; padding: .22rem .65rem;
+          border: 2.5px solid #222; border-radius: 20px; padding: .22rem .65rem;
           font-family: 'Fredoka One', cursive; font-size: .76rem; cursor: pointer;
           white-space: nowrap; transition: all .12s; flex-shrink: 0;
           box-shadow: 2px 2px 0 #222; background: white; color: #222;
