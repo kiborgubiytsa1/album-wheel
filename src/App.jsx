@@ -318,7 +318,7 @@ export default function App() {
         }
         .toggle-btn.active { background: #F4A44A; border-color: #d4843a; box-shadow: 0 0 0 2.5px #F4A44A33; }
         .toggle-all-btn {
-          background: none; border: 4px solid #ccc; border-radius: 8px;
+          background: none; border: 3px solid #ccc; border-radius: 20px;
           cursor: pointer; font-size: .72rem; padding: .2rem .5rem;
           color: #999; font-family: 'Fredoka One', cursive;
           transition: all .15s; flex-shrink: 0; line-height: 1.3;
